@@ -1,3 +1,8 @@
+//  https://scotch.io/tutorials/using-sass-in-create-react-app-v2
+
+@import './Variables.scss';
+@import './Mixins.scss';
+
 .App {
   text-align: center;
 }

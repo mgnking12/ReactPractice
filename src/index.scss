@@ -1,0 +1,15 @@
+//  https://scotch.io/tutorials/using-sass-in-create-react-app-v2
+
+@import './Variables.scss';
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $ff-default;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: $ff-code;
+}
