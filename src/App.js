@@ -20,7 +20,7 @@ import './App.scss';
                   },
                   ];
 
-// 'class App' is declaring a component using React ES6 class component, after you have declared a component, you can use it as an element anywhere in your application by creating an instance of it ex: <App />
+// 'class App' is declaring a component using React ES6 class component, after you have declared a component, you can use it as an element anywhere in your application by creating an instance of it ex: <App />  ///////// we are then extending the Component class that we are importing above from React
 class App extends Component {
   constructor(props){
     super(props);
