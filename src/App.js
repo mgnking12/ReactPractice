@@ -27,11 +27,13 @@ class App extends Component {
     this.state = {
       list
     };
+    // In order to define the onDismiss() as class method, you have to bind it in the constructor which we are doing below, We could also bind it in the button instead of the constructor, but we avoid this because that would cause it to bind everytime the button is clicked. We also avoid writing out the business logic for the onDissmiss function in the constructor so it won't "clutter up" the constructor, the constructor is onlythere to instantiate your class with all its properties. Class methods can be auto-bound using JavaScript ES6 arrow functions by themselves, but lets stick with the constructor method for now since that is what it says in the react docs. 
     this.onDismiss = this.onDismiss.bind(this);
   }
 
   onDismiss(id){
   const notId = item => item.objectID !== id;
+  // The filter function returns a new list instead of mutating the old one, and it supports the React convention of using immutable data structures.
   const updatedList = this.state.list.filter(notId);
   this.setState({ list: updatedList });
   }
@@ -54,6 +56,7 @@ class App extends Component {
                   <li>{item.num_comments}</li>
                   <li>{item.points}</li>
                 </ul>
+                {/* this button is an example of unidirectional data flow of React. An action is triggered in the view layer with onClick(), a function or class method modifies the local component state, and then the render() method of the component runs again to update the view. */}
                 <button 
                 onClick={() => this.onDismiss(item.objectID)} 
                 type="button">
