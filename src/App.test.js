@@ -1,3 +1,6 @@
+// https://facebook.github.io/create-react-app/docs/running-tests
+// https://jestjs.io/docs/en/using-matchers
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';

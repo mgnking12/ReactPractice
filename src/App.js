@@ -56,14 +56,49 @@ class App extends Component {
       // className is the same thing as 'class' in HTML but has to be used in place of it for JSX. All HTML attributes in JSX are going to follow the camelCase rule
       <div className="App">
 
+      <Search 
+      value={searchTerm}
+      onChange={this.onSearchChange}
+      >
+      Search 
+      {/* Composable Components - We are passing the 'Search' string to allow it to be accessed through the children property in the Search class. Now the Search component can destruct the children property from the props object, and specify where it should be displayed. When you use the Search component elsewhere, you can use different entities, since it’s not just text that can be passed as children. */}
+      </Search>
+
+      <Table 
+        list = {list}
+        pattern = {searchTerm}
+        onDismiss = {this.onDismiss}
+      />
+        
+      </div>
+    );
+  }
+}
+
+
+class Search extends Component {
+  render() {
+    const { value, onChange, children } = this.props; // we are getting value and onChange from the values passed through <Search /> in the class App, the children prop is used to pass elements to components from above and allows us to compose components together. (See the <Search/> tag in the class App)
+    return (
+      
         <form>
-          <input 
+          {children} <input 
           type="text" 
-          value={searchTerm} //we are setting the value to searchTerm so the input value is now a controlled component, if we did not do this it would be an uncontrolled component and react does not like that because uncontrolled components handle their own state.
-          onChange={this.onSearchChange}
+          value={value} //we are setting the value to searchTerm because inputs like to handle their own state and we don't want that. By putting a value here we are making the input value a controlled component, if we did not do this it would be an uncontrolled component which is a no no. https://reactjs.org/docs/forms.html With a controlled component, every state mutation will have an associated handler function, in this case, onSearchChange. 
+          onChange={onChange}
           />
         </form>
-        {list.filter(isSearched(searchTerm)).map(item => //when using js es6 you can remove the parenthesis around the argument if you are only going to have one instead of using (item) you can just using 'item' as we are doing. 
+        )}
+}
+
+
+
+class Table extends Component {
+  render() {
+    const { list, pattern, onDismiss } = this.props; // we are getting list, pattern, and onDismiss from the values passed through <Table /> in the class App
+    return (
+      <div>
+        {list.filter(isSearched(pattern)).map(item => //when using js es6 you can remove the parenthesis around the argument if you are only going to have one instead of using (item) you can just using 'item' as we are doing. 
             // return ( /////////this is used when you have a "block body" we removed it because we had a "concise body" when using ES6 and in a concise body an implicit return is attached so there is no need to add return()
               // React can identify modified items when the list changes with a key identifier ////// avoid using the index in an array as the idenifier, the index is not stable and you always need a stable key identifier 
               <div key={item.objectID}>
@@ -77,16 +112,15 @@ class App extends Component {
                 </ul>
                 {/* this button is an example of unidirectional data flow of React. An action is triggered in the view layer with onClick(), a function or class method modifies the local component state, and then the render() method of the component runs again to update the view. */}
                 <button 
-                onClick={() => this.onDismiss(item.objectID)} 
+                onClick={() => onDismiss(item.objectID)} 
                 type="button">
                 Dismiss
                 </button>
                 {/* This on click function has one function wrapped in another so it won't execute on page load, if we didn't have to pass anything to onDismiss we could just do onClick={onDismiss}, but since we need the item.objectID for the onDismiss function we had to have it in another function. Read more about it on the the-road-to-learn-react.pdf on page 44...... This concept is called higher-order functions in JavaScript */}
               </div>
           )}
-      </div>
-    );
-  }
+          </div>
+    )}
 }
 
 export default App;
