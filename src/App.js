@@ -2,26 +2,47 @@ import React, { Component } from 'react';
 import './App.scss';
 
  const list = [
-                  {
-                  title: 'React',
-                  url: 'https://reactjs.org/',
-                  author: 'Jordan Walke',
-                  num_comments: 3,
-                  points: 4,
-                  objectID: 0,
-                  },
-                  {
-                  title: 'Redux',
-                  url: 'https://redux.js.org/',
-                  author: 'Dan Abramov, Andrew Clark',
-                  num_comments: 2,
-                  points: 5,
-                  objectID: 1,
-                  },
-                  ];
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+];
+
+const list2 = [
+  {
+    title: 'rrrrrrReact',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: 'rrrrrrrRedux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+];
 
 // not sure why it is telling me to make this function outside of the react component? Does it have to do with it being a higher order function? 
-const isSearched = searchTerm => item => item.title.toLowerCase().includes(searchTerm.toLowerCase());
+const isSearched = searchTerm => item => 
+item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+item.author.toLowerCase().includes(searchTerm.toLowerCase());
 
 
 // 'class App' is declaring a component using React ES6 class component, after you have declared a component, you can use it as an element anywhere in your application by creating an instance of it ex: <App />  ///////// we are then extending the Component class that we are importing above from React
@@ -29,6 +50,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
+      list2,
       list,
       searchTerm: ''
     };
@@ -51,7 +73,7 @@ class App extends Component {
   }
 
   render() {
-    const { searchTerm, list } = this.state; //Destructuring in JavaScript ES6 provides easier access to properties in objects and arrays, this way we don't have to keep typing this.state when we access searchTerm and list from here on out! 
+    const { searchTerm, list, list2 } = this.state; //Destructuring in JavaScript ES6 provides easier access to properties in objects and arrays, this way we don't have to keep typing this.state when we access searchTerm and list from here on out! 
     return (
       // className is the same thing as 'class' in HTML but has to be used in place of it for JSX. All HTML attributes in JSX are going to follow the camelCase rule
       <div className="App">
@@ -61,8 +83,15 @@ class App extends Component {
       onChange={this.onSearchChange}
       >
       Search 
-      {/* Composable Components - We are passing the 'Search' string to allow it to be accessed through the children property in the Search class. Now the Search component can destruct the children property from the props object, and specify where it should be displayed. When you use the Search component elsewhere, you can use different entities, since it’s not just text that can be passed as children. */}
+      {/* Composable Components - We are passing the 'Search' string to allow it to be accessed through the children property in the Search class. Now the Search component can destruct the children property from the props object, and specify where it should be displayed. When you use the Search component elsewhere, you can use different entities, since it’s not just text that can be passed as children. https://reactjs.org/docs/composition-vs-inheritance.html */}
       </Search>
+
+      <Table 
+        list = {list2}
+        pattern = {searchTerm}
+        onDismiss = {this.onDismiss}
+      />
+
 
       <Table 
         list = {list}
@@ -110,17 +139,46 @@ class Table extends Component {
                   <li>{item.num_comments}</li>
                   <li>{item.points}</li>
                 </ul>
+                
+                
                 {/* this button is an example of unidirectional data flow of React. An action is triggered in the view layer with onClick(), a function or class method modifies the local component state, and then the render() method of the component runs again to update the view. */}
-                <button 
-                onClick={() => onDismiss(item.objectID)} 
-                type="button">
-                Dismiss
-                </button>
+                <Button onClick={() => onDismiss(item.objectID)} >
                 {/* This on click function has one function wrapped in another so it won't execute on page load, if we didn't have to pass anything to onDismiss we could just do onClick={onDismiss}, but since we need the item.objectID for the onDismiss function we had to have it in another function. Read more about it on the the-road-to-learn-react.pdf on page 44...... This concept is called higher-order functions in JavaScript */}
+                Dismiss
+                </Button>
+
+                <Button onClick={() => console.log("test")} >
+                blah
+                </Button>
+                
               </div>
           )}
           </div>
     )}
+}
+
+
+
+class Button extends Component {
+  render() {
+    const { 
+      onClick, 
+      className = '',  //The className attribute is another React derivate for the HTML attribute class, it is optional that is why we have it as an empty string
+      children,
+     } = this.props;
+    return (
+      
+        <button 
+        onClick={onClick}
+        className={className}
+        type="button"
+        >
+        {children}
+        </button>
+      
+
+    );
+  }
 }
 
 export default App;
