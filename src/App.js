@@ -76,7 +76,8 @@ class App extends Component {
     const { searchTerm, list, list2 } = this.state; //Destructuring in JavaScript ES6 provides easier access to properties in objects and arrays, this way we don't have to keep typing this.state when we access searchTerm and list from here on out! 
     return (
       // className is the same thing as 'class' in HTML but has to be used in place of it for JSX. All HTML attributes in JSX are going to follow the camelCase rule
-      <div className="App">
+      <div className="page">
+      <div className="interactions">
 
       <Search 
       value={searchTerm}
@@ -85,7 +86,7 @@ class App extends Component {
       Search 
       {/* Composable Components - We are passing the 'Search' string to allow it to be accessed through the children property in the Search class. Now the Search component can destruct the children property from the props object, and specify where it should be displayed. When you use the Search component elsewhere, you can use different entities, since it’s not just text that can be passed as children. https://reactjs.org/docs/composition-vs-inheritance.html */}
       </Search>
-
+      </div>  
       <Table 
         list = {list2}
         pattern = {searchTerm}
@@ -98,35 +99,65 @@ class App extends Component {
         pattern = {searchTerm}
         onDismiss = {this.onDismiss}
       />
-        
+      
       </div>
     );
   }
 }
 
 
-class Search extends Component {
-  render() {
-    const { value, onChange, children } = this.props; // we are getting value and onChange from the values passed through <Search /> in the class App, the children prop is used to pass elements to components from above and allows us to compose components together. (See the <Search/> tag in the class App)
-    return (
-      
-        <form>
-          {children} <input 
-          type="text" 
-          value={value} //we are setting the value to searchTerm because inputs like to handle their own state and we don't want that. By putting a value here we are making the input value a controlled component, if we did not do this it would be an uncontrolled component which is a no no. https://reactjs.org/docs/forms.html With a controlled component, every state mutation will have an associated handler function, in this case, onSearchChange. 
-          onChange={onChange}
-          />
-        </form>
-        )}
+// Functional Stateless Components are functions that take input and return an output, they also have no local state meaning you cannot access or update the state. The inputs are the props, and the output is a component instance in plain JSX
+// This is the ES5 Version
+// function Search({value, onChange, children}){
+//   // const {value, onChange, children} = this.props; instead of destructuring the props this way, we are going to do it in the function signature above
+//   return(
+//     <form>
+//     children
+//     <input
+//     type="text"
+//     value={value}
+//     onChange={onChange}
+//     />
+//     </form>
+//   );
+// }
+
+// this is the ES6 version
+const Search = ({value, onChange, children}) => {
+// putting {return()} makes this a "block body" meaning before the return we could do something else if needed to make it more complex
+  return(
+    <form>
+      {children}
+      <input
+      type="text"
+      value={value}
+      onChange={onChange}
+      />
+    </form>
+  );
 }
 
 
+// We turned this class into a functional stateless component above, it is best to use classes only when they are not stateless 
+// class Search extends Component {
+//   render() {
+//     const { value, onChange, children } = this.props; // we are getting value and onChange from the values passed through <Search /> in the class App, the children prop is used to pass elements to components from above and allows us to compose components together. (See the <Search/> tag in the class App)
+//     return (
+      
+//         <form>
+//           {children} <input 
+//           type="text" 
+//           value={value} //we are setting the value to searchTerm because inputs like to handle their own state and we don't want that. By putting a value here we are making the input value a controlled component, if we did not do this it would be an uncontrolled component which is a no no. https://reactjs.org/docs/forms.html With a controlled component, every state mutation will have an associated handler function, in this case, onSearchChange. 
+//           onChange={onChange}
+//           />
+//         </form>
+//         )}
+// }
 
-class Table extends Component {
-  render() {
-    const { list, pattern, onDismiss } = this.props; // we are getting list, pattern, and onDismiss from the values passed through <Table /> in the class App
-    return (
-      <div>
+
+const Table = ({list, pattern, onDismiss}) => {
+  return(
+    <div>
         {list.filter(isSearched(pattern)).map(item => //when using js es6 you can remove the parenthesis around the argument if you are only going to have one instead of using (item) you can just using 'item' as we are doing. 
             // return ( /////////this is used when you have a "block body" we removed it because we had a "concise body" when using ES6 and in a concise body an implicit return is attached so there is no need to add return()
               // React can identify modified items when the list changes with a key identifier ////// avoid using the index in an array as the idenifier, the index is not stable and you always need a stable key identifier 
@@ -154,31 +185,21 @@ class Table extends Component {
               </div>
           )}
           </div>
-    )}
+  )
 }
 
-
-
-class Button extends Component {
-  render() {
-    const { 
-      onClick, 
-      className = '',  //The className attribute is another React derivate for the HTML attribute class, it is optional that is why we have it as an empty string
-      children,
-     } = this.props;
-    return (
-      
-        <button 
-        onClick={onClick}
-        className={className}
-        type="button"
-        >
-        {children}
-        </button>
-      
-
-    );
-  }
+//The className attribute is another React derivate for the HTML attribute class, it is optional that is why we have it as an empty string
+const Button = ({onClick, className='', children}) => {
+  return(
+    <button
+    onClick={onClick}
+    className={className}
+    type="button"  
+    >
+    {children}
+    </button>
+  )
 }
+
 
 export default App;
