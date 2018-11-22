@@ -9,43 +9,45 @@ const PARAM_SEARCH = 'query=';
 // template literals can be used in ES6 and are done with back-ticks  https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals
 const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
 
- const list = [
-  {
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
 
-const list2 = [
-  {
-    title: 'rrrrrrReact',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'rrrrrrrRedux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
+// No longer using these list because we are getting list from an API 
+//  const list = [
+//   {
+//     title: 'React',
+//     url: 'https://reactjs.org/',
+//     author: 'Jordan Walke',
+//     num_comments: 3,
+//     points: 4,
+//     objectID: 0,
+//   },
+//   {
+//     title: 'Redux',
+//     url: 'https://redux.js.org/',
+//     author: 'Dan Abramov, Andrew Clark',
+//     num_comments: 2,
+//     points: 5,
+//     objectID: 1,
+//   },
+// ];
+
+// const list2 = [
+//   {
+//     title: 'rrrrrrReact',
+//     url: 'https://reactjs.org/',
+//     author: 'Jordan Walke',
+//     num_comments: 3,
+//     points: 4,
+//     objectID: 0,
+//   },
+//   {
+//     title: 'rrrrrrrRedux',
+//     url: 'https://redux.js.org/',
+//     author: 'Dan Abramov, Andrew Clark',
+//     num_comments: 2,
+//     points: 5,
+//     objectID: 1,
+//   },
+// ];
 
 const largeColumn = {
   width: '40%',
@@ -69,14 +71,20 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      list2,
-      list,
-      searchTerm: ''
+      result: null,
+      searchTerm: DEFAULT_QUERY
+
+      // We are removing the info below because we will be using an API instead of a list defined by us to produce information
+      // list2,
+      // list,
+      // searchTerm: ''
     };
     // In order to define the onDismiss() as class method, you have to bind it in the constructor which we are doing below, We could also bind it in the button instead of the constructor, but we avoid this because that would cause it to bind everytime the button is clicked. We also avoid writing out the business logic for the onDissmiss function in the constructor so it won't "clutter up" the constructor, the constructor is onlythere to instantiate your class with all its properties. Class methods can be auto-bound using JavaScript ES6 arrow functions by themselves, but lets stick with the constructor method for now since that is what it says in the react docs. 
     this.onDismiss = this.onDismiss.bind(this);
 
     this.onSearchChange = this.onSearchChange.bind(this);
+
+    this.setSearchTopStories = this.setSearchTopStories.bind(this);
   }
 
   onDismiss(id){
@@ -89,6 +97,21 @@ class App extends Component {
   // When using a handler in your element, you get access to the synthetic React event in your callback function’s signature.
   onSearchChange(event){
     this.setState({ searchTerm: event.target.value });
+  }
+
+  setSearchTopStories(result){
+    this.setState({result});
+  }
+
+
+  // this lifestyle method is called once, when the component is mounted. We are currently using it to fetch data. Since 'redux' is the default parameter, it will search stories that include redux (if the variable DEFAULT_QUERY changes this will too)
+  componentDidMount(){
+    const { searchTerm } = this.state;
+
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+    .then(response => response.json())
+    .then(result => this.setSearchTopStories(result))
+    .catch(error => error);
   }
 
 // render is a mandatory lifecycle method that returns elements as the output of a component 
