@@ -1,6 +1,14 @@
 import React, { Component } from 'react';
 import './App.scss';
 
+const DEFAULT_QUERY = 'redux';
+const PATH_BASE = 'https://hn.algolia.com/api/v1';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
+
+// template literals can be used in ES6 and are done with back-ticks  https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Template_literals
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
+
  const list = [
   {
     title: 'React',
@@ -39,6 +47,16 @@ const list2 = [
   },
 ];
 
+const largeColumn = {
+  width: '40%',
+};
+const midColumn = {
+  width: '30%',
+};
+const smallColumn = {
+  width: '10%',
+};
+
 // not sure why it is telling me to make this function outside of the react component? Does it have to do with it being a higher order function? 
 const isSearched = searchTerm => item => 
 item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -47,6 +65,7 @@ item.author.toLowerCase().includes(searchTerm.toLowerCase());
 
 // 'class App' is declaring a component using React ES6 class component, after you have declared a component, you can use it as an element anywhere in your application by creating an instance of it ex: <App />  ///////// we are then extending the Component class that we are importing above from React
 class App extends Component {
+  // constructor(props) is a lifestyle method, you can set your state here and bind class methods here as well 
   constructor(props){
     super(props);
     this.state = {
@@ -72,6 +91,7 @@ class App extends Component {
     this.setState({ searchTerm: event.target.value });
   }
 
+// render is a mandatory lifecycle method that returns elements as the output of a component 
   render() {
     const { searchTerm, list, list2 } = this.state; //Destructuring in JavaScript ES6 provides easier access to properties in objects and arrays, this way we don't have to keep typing this.state when we access searchTerm and list from here on out! 
     return (
@@ -109,7 +129,7 @@ class App extends Component {
 // Functional Stateless Components are functions that take input and return an output, they also have no local state meaning you cannot access or update the state. The inputs are the props, and the output is a component instance in plain JSX
 // This is the ES5 Version
 // function Search({value, onChange, children}){
-//   // const {value, onChange, children} = this.props; instead of destructuring the props this way, we are going to do it in the function signature above
+//   // const {value, onChange, children} = this.props; instead of destructuring the props this way, we are going to do it in the function signature above https://www.youtube.com/watch?v=PB_d3uBkQPs
 //   return(
 //     <form>
 //     children
@@ -124,6 +144,7 @@ class App extends Component {
 
 // this is the ES6 version
 const Search = ({value, onChange, children}) => {
+  // const {value, onChange, children} = this.props; instead of destructuring the props this way, we are going to do it in the function signature above https://www.youtube.com/watch?v=PB_d3uBkQPs
 // putting {return()} makes this a "block body" meaning before the return we could do something else if needed to make it more complex
   return(
     <form>
@@ -157,23 +178,21 @@ const Search = ({value, onChange, children}) => {
 
 const Table = ({list, pattern, onDismiss}) => {
   return(
-    <div>
+    <div className="table">
         {list.filter(isSearched(pattern)).map(item => //when using js es6 you can remove the parenthesis around the argument if you are only going to have one instead of using (item) you can just using 'item' as we are doing. 
             // return ( /////////this is used when you have a "block body" we removed it because we had a "concise body" when using ES6 and in a concise body an implicit return is attached so there is no need to add return()
               // React can identify modified items when the list changes with a key identifier ////// avoid using the index in an array as the idenifier, the index is not stable and you always need a stable key identifier 
-              <div key={item.objectID}>
-                <ul>
-                  <li className="title">
+              <div key={item.objectID} className="table-row">
+                  <span style={largeColumn} className="title">
                     <a href={item.url}>{item.title}</a>
-                  </li>
-                  <li>{item.author}</li>
-                  <li>{item.num_comments}</li>
-                  <li>{item.points}</li>
-                </ul>
+                  </span>
+                  <span style={midColumn}>{item.author}</span>
+                  <span style={smallColumn}>{item.num_comments}</span>
+                  <span style={smallColumn}>{item.points}</span>
                 
                 
                 {/* this button is an example of unidirectional data flow of React. An action is triggered in the view layer with onClick(), a function or class method modifies the local component state, and then the render() method of the component runs again to update the view. */}
-                <Button onClick={() => onDismiss(item.objectID)} >
+                <Button onClick={() => onDismiss(item.objectID)} className="button-inline">
                 {/* This on click function has one function wrapped in another so it won't execute on page load, if we didn't have to pass anything to onDismiss we could just do onClick={onDismiss}, but since we need the item.objectID for the onDismiss function we had to have it in another function. Read more about it on the the-road-to-learn-react.pdf on page 44...... This concept is called higher-order functions in JavaScript */}
                 Dismiss
                 </Button>
